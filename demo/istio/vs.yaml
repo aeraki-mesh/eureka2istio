@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: bbb-managed
+  namespace: istio-system
+spec:
+  gateways:
+  - mesh
+  hosts:
+  - service-bbbbb.test.com
+  http:
+  - route:
+    - destination:
+        host: asm-0.testhl.svc.cluster.local
+        port:
+          number: 80
+      weight: 100

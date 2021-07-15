@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: testbbb
+  namespace: testhl
+spec:
+  host: service-bbbbb.test.com
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        useSourceIp: true

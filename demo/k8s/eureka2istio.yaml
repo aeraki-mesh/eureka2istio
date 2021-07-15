@@ -1,0 +1,81 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eureka2istio
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: eureka2istio
+  name: eureka2istio
+rules:
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - serviceentries
+    verbs:
+      - get
+      - watch
+      - list
+      - update
+      - patch
+      - create
+      - delete
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - nonResourceURLs:
+      - '*'
+    verbs:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: eureka2istio
+  name: eureka2istio
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: eureka2istio
+subjects:
+  - kind: ServiceAccount
+    name: eureka2istio
+    namespace: testhl
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eureka2istio
+  namespace: testhl
+  labels:
+    app: eureka2istio
+spec:
+  selector:
+    matchLabels:
+      app: eureka2istio
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: eureka2istio
+    spec:
+      serviceAccountName: eureka2istio
+      containers:
+        - name: eureka2istio
+          image: huanghuangzym/eureka2istio
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: EK_ADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address

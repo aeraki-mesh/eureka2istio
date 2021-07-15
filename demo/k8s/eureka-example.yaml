@@ -1,0 +1,324 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-service-d
+  namespace: testhl
+  labels:
+    app: spring-service-d
+spec:
+  selector:
+    matchLabels:
+      app: spring-service-d
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: spring-service-d
+        version: v1
+    spec:
+      imagePullSecrets:
+      - name: alaudak8s
+      hostAliases:
+      - ip: "10.103.16.234"
+        hostnames:
+        - "service-b.asm.com"
+      - ip: "10.103.216.56"
+        hostnames:
+        - "service-c.asm.com"
+      - ip: "192.168.33.19"
+        hostnames:
+        - "service-a.asm.com"
+      containers:
+      containers:
+        - name: spring-service-d
+          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-d:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MSG
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: REG_HOSTNAME
+              value: service-d.asm.com
+            - name: REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-a
+  namespace: testhl
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+  selector:
+    app: spring-service-a
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-service-a
+  namespace: testhl
+  labels:
+    app: spring-service-a
+spec:
+  selector:
+    matchLabels:
+      app: spring-service-a
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/logLevel: "trace"
+      labels:
+        app: spring-service-a
+        version: v1
+    spec:
+      imagePullSecrets:
+      - name: alaudak8s
+      containers:
+        - name: spring-service-a
+          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-a:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: REG_HOSTNAME
+              value: service-a.asm.com
+            - name: REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-service-e
+  namespace: testhl
+  labels:
+    app: spring-service-e
+spec:
+  selector:
+    matchLabels:
+      app: spring-service-e
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/logLevel: "trace"
+      labels:
+        app: spring-service-e
+        version: v1
+    spec:
+      imagePullSecrets:
+      - name: alaudak8s
+      containers:
+        - name: spring-service-e
+          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-e:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MSG
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: REG_HOSTNAME
+              value: service-e.asm.com
+            - name: REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-b
+  namespace: testhl
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+  selector:
+    app: spring-service-b
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-c
+  namespace: testhl
+spec:
+  ports:
+  - port: 81
+    protocol: TCP
+    targetPort: 81
+    name: http
+  selector:
+    app: spring-service-c
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-service-b-v1
+  namespace: testhl
+  labels:
+    app: spring-service-b
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: spring-service-b
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: spring-service-b
+        version: v1
+    spec:
+      imagePullSecrets:
+      - name: alaudak8s
+      containers:
+        - name: spring-service-b
+          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-b:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REG_HOSTNAME
+              value: service-b.asm1.com
+            - name: SERVER_PORT
+              value: "80"
+            - name: REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address
+            - name: MSG
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-service-b-v2
+  namespace: testhl
+  labels:
+    app: spring-service-b
+    version: v2
+spec:
+  selector:
+    matchLabels:
+      app: spring-service-b
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: spring-service-b
+        version: v2
+    spec:
+      imagePullSecrets:
+      - name: alaudak8s
+      containers:
+        - name: spring-service-b-v2
+          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-b:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REG_HOSTNAME
+              value: service-b.asm2.com
+            - name: SERVER_PORT
+              value: "80"
+            - name: REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address
+            - name: MSG
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-service-c
+  namespace: testhl
+  labels:
+    app: spring-service-c
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: spring-service-c
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "false"
+      labels:
+        app: spring-service-c
+        version: v1
+    spec:
+      imagePullSecrets:
+      - name: alaudak8s
+      containers:
+        - name: spring-service-c
+          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-c:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REG_HOSTNAME
+              value: service-c.asm.com
+            - name: SERVER_PORT
+              value: "81"
+            - name: REGISTRY_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: eureka-cm
+                  key: eureka_service_address
+            - name: MSG
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+
