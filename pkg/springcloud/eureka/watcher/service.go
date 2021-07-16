@@ -22,7 +22,7 @@ import (
 	"istio.io/pkg/log"
 )
 
-// ServiceWatcher watches for newly created dubbo services and creates a providerWatcher for each service
+// ServiceWatcher watches for newly created spring cloud eureka services and creates a providerWatcher for each service
 type ServiceWatcher struct {
 	conn             *eureka.Client
 	ic               *istioclient.Clientset

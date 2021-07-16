@@ -43,11 +43,11 @@ const (
 	// Defaults to 10 seconds. If events keep showing up with no break for this time, we'll trigger a push.
 	debounceMax = 10 * time.Second
 
-	// the maximum retries if failed to sync dubbo services to Istio
+	// the maximum retries if failed to sync spring cloud eureka services to Istio
 	maxRetries = 10
 )
 
-// ProviderWatcher watches changes on dubbo service providers and synchronize the changed dubbo providers to the Istio
+// ProviderWatcher watches changes on spring cloud eureka service providers and synchronize the changed spring cloud eureka providers to the Istio
 // control plane via service entries
 type ProviderWatcher struct {
 	conn           *eureka.Client
@@ -90,7 +90,7 @@ func (w *ProviderWatcher) syncServices2IstioUntilMaxRetries(applications []eurek
 
 		serviceEntries, err := model.ConvertServiceEntry(w.eurekaName, app.Name, app.Instances)
 		if err != nil {
-			log.Errorf("Failed to synchronize dubbo services to Istio: %v", err)
+			log.Errorf("Failed to synchronize spring cloud eureka services to Istio: %v", err)
 		}
 
 		for _, new := range serviceEntries {
@@ -98,11 +98,11 @@ func (w *ProviderWatcher) syncServices2IstioUntilMaxRetries(applications []eurek
 			retries := 0
 			for err != nil {
 				if isRetryableError(err) && retries < maxRetries {
-					log.Errorf("Failed to synchronize dubbo services to Istio, error: %v,  retrying %v ...", err, retries)
+					log.Errorf("Failed to synchronize spring cloud eureka services to Istio, error: %v,  retrying %v ...", err, retries)
 					err = w.syncService2Istio(new)
 					retries++
 				} else {
-					log.Errorf("Failed to synchronize dubbo services to Istio: %v", err)
+					log.Errorf("Failed to synchronize spring cloud eureka services to Istio: %v", err)
 					err = nil
 				}
 			}
@@ -114,8 +114,8 @@ func (w *ProviderWatcher) syncServices2IstioUntilMaxRetries(applications []eurek
 
 func (w *ProviderWatcher) syncService2Istio(new *v1alpha3.ServiceEntry) error {
 	// delete old service entry if multiple service entries found in different namespaces.
-	// Aeraki doesn't support deploying providers of the same dubbo interface in multiple namespaces because interface
-	// is used as the global dns name for dubbo service across the whole mesh
+	// Aeraki doesn't support deploying providers of the same spring cloud eureka interface in multiple namespaces because interface
+	// is used as the global dns name for spring cloud eureka service across the whole mesh
 	if oldNS, exist := w.serviceEntryNS[new.Name]; exist {
 		if oldNS != new.Namespace {
 			log.Errorf("found service entry %s in two namespaces : %s %s ,delete the older one %s/%s", new.Name, oldNS,

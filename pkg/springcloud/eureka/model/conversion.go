@@ -74,7 +74,7 @@ func ConvertServiceEntry(eurekaName, service string, eurekaInstances []eureka.In
 		}
 
 		ns := "istio-system"
-		// All the providers of a dubbo service should be deployed in the same namespace
+		// All the providers of a spring cloud eureka service should be deployed in the same namespace
 		if se, exist := serviceEntries[host]; exist {
 			if ns != se.Namespace {
 				log.Errorf("found provider in multiple namespaces: %s %s, ignore provider %s", se.Namespace, ns, provider)
@@ -84,7 +84,7 @@ func ConvertServiceEntry(eurekaName, service string, eurekaInstances []eureka.In
 
 		port, err := strconv.Atoi(instancePort)
 		if err != nil {
-			log.Errorf("failed to convert dubbo port to int:  %s, ignore provider %s", instancePort, provider)
+			log.Errorf("failed to convert spring cloud eureka port to int:  %s, ignore provider %s", instancePort, provider)
 			continue
 		}
 
@@ -195,7 +195,7 @@ func parseProvider(provider eureka.Instance) map[string]string {
 	return eurekaAttributes
 }
 
-// ConstructServiceEntryName constructs the service entry name for a given dubbo service
+// ConstructServiceEntryName constructs the service entry name for a given spring cloud eureka service
 func ConstructServiceEntryName(service string) string {
 	validDNSName := strings.ReplaceAll(strings.ToLower(service), ".", "-")
 	return asmFieldManager + "-" + validDNSName

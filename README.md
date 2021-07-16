@@ -31,7 +31,7 @@ Aeraki 根据 Eureka 服务信息和用户设置的路由规则生成数据面�
 
 Aeraki 提供了一个 Spring Cloud Netflix Demo 应用，用于使用该 Demo 来测试 Spring Cloud Netflix 应用的流量控制、metrics 指标采集和权限控制等微服务治理功能。
 * [Demo k8s 部署文件下载](https://github.com/aeraki-framework/eureka2istio/tree/master/demo)
-* [Demo Dubbo 程序源码下载](https://github.com/huanghuangzym/spring-cloud-netflix-example)
+* [Demo Spring Cloud Eureka 程序源码下载](https://github.com/huanghuangzym/spring-cloud-netflix-example)
 
 备注：该 Demo 应用基于开源 Istio 1.9(安装时需开启dnsAgent) + Aeraki 运行，也可以在 
 [腾讯云 TCM (Tencent Cloud Mesh)](https://console.cloud.tencent.com/tke2/mesh?rid=8) 托管服务网格上运行。
