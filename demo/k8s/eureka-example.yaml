@@ -33,7 +33,7 @@ spec:
       containers:
       containers:
         - name: spring-service-d
-          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-d:latest
+          image: aeraki/eureka2istio-service-d:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: MY_POD_IP
@@ -92,7 +92,7 @@ spec:
       - name: alaudak8s
       containers:
         - name: spring-service-a
-          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-a:latest
+          image: aeraki/eureka2istio-service-a:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: MY_POD_IP
@@ -132,7 +132,7 @@ spec:
       - name: alaudak8s
       containers:
         - name: spring-service-e
-          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-e:latest
+          image: aeraki/eureka2istio-service-e:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: MY_POD_IP
@@ -207,7 +207,7 @@ spec:
       - name: alaudak8s
       containers:
         - name: spring-service-b
-          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-b:latest
+          image: aeraki/eureka2istio-service-b:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: REG_HOSTNAME
@@ -254,7 +254,7 @@ spec:
       - name: alaudak8s
       containers:
         - name: spring-service-b-v2
-          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-b:latest
+          image: aeraki/eureka2istio-service-b:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: REG_HOSTNAME
@@ -301,7 +301,7 @@ spec:
       - name: alaudak8s
       containers:
         - name: spring-service-c
-          image: harbor-b.alauda.cn/asm/netflix/spring-cloud-netflix-example/service-c:latest
+          image: aeraki/eureka2istio-service-c:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: REG_HOSTNAME
